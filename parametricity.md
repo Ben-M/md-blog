@@ -4,7 +4,7 @@
 
 ---
 
-In this post I will explain parametricity with code examples, this concept is essential in the road to convince yourself that there is something more profound to functional programming that meets the eye.
+In this post I will explain parametricity with code examples. This concept is essential if you want to convince yourself that there is something more profound to functional programming than meets the eye.
 
 ---
 
@@ -18,7 +18,7 @@ def f[A](a: A, b: String): String = "hi"
 
 ```
 
-`A` is a type parameter, the caller will decide what it is when he calls the function
+`A` is a type parameter. The caller decides the type when they calls the function
 
 
 ```scala
@@ -32,28 +32,28 @@ scala> f(List(1,2,3), "panda")
 res2: String = hi
 ```
 
-As you can see I can pass whatever I want in the first parameter, which seems to give more generality, but something more is going on here
+As you can see I can pass whatever I want in the first parameter. Yes, this gives me more generality, but there is also something more going on here.
 
 ---
 
 # Let's play the guess my implementation game
 
-Parametricity was defined in [Theorems for free!](http://ecee.colorado.edu/ecen5533/fall11/reading/free.pdf) by Philip Walder, here is a click-bait quote from the introduction
+Parametricity was defined in [Theorems for free!](http://ecee.colorado.edu/ecen5533/fall11/reading/free.pdf) by Philip Walder. Here is a click-bait quote from the introduction:
 
 > "Write down the definition of a polymorphic function on
 a piece of paper. Tell me its type, but be careful not
 to let me see the function’s definition. I will tell you a
 theorem that the function satisfies."
 
-Basically he claims that given any polymorphic function he can guess things that are true about this function or in a sense guess its implementation !
+In essense, he claims that given any polymorphic function he can guess things that are true about the function or, in a sense, guess its implementation!
 
-Seems magical, but I guarantee you by the end of this post you will also know how to do it.
+It seems magical, but I guarantee you by the end of this post you will also know how to do it.
 
 --- 
 
-# How many implementation can this function have ?
+# How many implementation can this function have?
 
-Disclaimer: The functions seems like toy examples but there is a point to it so hang on !
+Disclaimer: The functions seems like toy examples but there is a point to it so bear with me!
 
 
 ```scala
@@ -75,7 +75,7 @@ def f[A](a: A): A = a
 
 ```
 
-We restrict ourselves to Scala FP safe subset, no `toString`, `hashCode` built in functions, no exceptions.
+Not that we're restricting ourselves to Scala FP safe subset. No `toString`, `hashCode` built in functions, no exceptions.
 
 
 ## Let's add another parameter `b` of the same parametric type 
@@ -108,7 +108,7 @@ Answer : 1
 scala> def f[A](a: A, b: String): String = b
 f: [A](a: A, b: String)String
 ```
-Note that because we are restricting ourselves to Scala safe subset we are not allowed to do something like this : 
+Remember that we're restricting ourselves to Scala safe subset, so we are not allowed to do something like this: 
 
 ```scala
 scala> def f[A](a: A, b: String): String = a + b
@@ -134,7 +134,7 @@ scala> def f[A](as: List[A]): List[A] = ???
 f: [A](as: List[A])List[A]
 ```
 
-Answer : A little bit more than 1, but still small
+Answer : A little bit more than 1, but still small.
 
 
 
@@ -149,8 +149,7 @@ scala> def f[A](as: List[A]): List[A] = if (as.isEmpty) Nil else as.head :: Nil
 f: [A](as: List[A])List[A]
 ```
 
-We are still fairly limited in our possible implementations and that is because
-we don't know anything about specific `A`s. We cannot sort them as we don't have an ordering, we are just stuck to return a subset of the original list.
+We are still fairly limited in our possible implementations and that is because we don't know anything about specific `A`s. We cannot sort them as we don't have an ordering. We are just stuck with returning a subset of the original list.
 
 
 ### We add a new type parameter `B`
@@ -180,7 +179,7 @@ f: [A](a: A)Int
 
 Answer : 2^32 + 1 (Number of `Int`s)
 
-We can completely ignore the input type here and start implementing away
+We can completely ignore the input type here and start implementing away:
 
 
 ```scala
@@ -211,21 +210,19 @@ f: [A](a: A)Int
 
 
 
-By introducing a type parameter, we hide information from the implementation of the function .
+By introducing a type parameter, we hide information from the implementation of the function.
 
 The implementation space is reduced because we cannot use any property on this type (think about `List[A]` we cannot sort `A`s because we know nothing about it)
 
-Reduced possibilities of implementation means reduced possibilities of errors in code !
+Reduced possibilities of implementation means reduced possibilities of errors in code!
 
-What's important to see here, is making function more parametric is not about making them more general for greater code reuse it's about reducing the number of possible implementations.
+What's important to see here is that making function more parametric is not about making them more general for code reuse. It's about reducing the number of possible implementations.
 
 ---
 
-### Where is parametricity used ?
+### Where is parametricity used?
 
-Parametricity is heavyly used in typeclasses here are a few examples
-
-
+Parametricity is heavyly used in typeclasses. Here are a few examples:
 
 ```scala
 
@@ -240,13 +237,13 @@ trait Eq[A] {
 ```
 
 `Show[T]` provides a textual representation of type `T`, you can think of it has the reasonable version of `toString`
-`Eq[A]`  used to determine equality between 2 instances of the same type, it's basically better version of the built-in non-safe `==`
+`Eq[A]`  used to determine equality between 2 instances of the same type. It's a better version of the built-in non-safe `==`
 
 
 What's important here is the that they use 1 type parameter
 
 
-Now some more advanced ones
+Now some more advanced ones:
 
 ```scala
 
@@ -278,7 +275,7 @@ trait Traverse[F[_]] extends Functor[F] {
 `traverse` is interesting because it asks from one of its type parameter `G[_]` to also be an `Applicative` re-using a previous type class.
 
 
-The point here is not to scare you off, but to give you a sense that these abstract signatures make things easier at the implementation stage and not harder, if you go look up their implementation in a library like cats or scalaz you will see very little code there BECAUSE of the high parametricity
+The point here is not to scare you off, but to give you a sense that these abstract signatures make things easier at the implementation stage and not harder. If you go look up their implementation in a library like cats or scalaz you will see very little code there BECAUSE of the high parametricity.
 
 
 ---
@@ -287,10 +284,10 @@ The point here is not to scare you off, but to give you a sense that these abstr
 
 - Type parameters are like normal parameters but at the type level `f[A](a: A)`
 - Parametric functions do not use fixed types like `String`, `Int`, ...
-- Parametricity is NOT about code re-use, it's a nice side effect though !
+- Parametricity is NOT about code re-use, it's a nice side effect though!
 - By introducing type parameters, we hide information from the implementation of the function
 - By hiding information we lower the implementation space and thus reduce the amount of possible mistake
-- Typeclasses make heavy use of parametricity, you can get a sense of it by looking at how small their implementations are
+- Typeclasses make heavy use of parametricity. You can get a sense of it by looking at how small their implementations are
 
 ---
 
